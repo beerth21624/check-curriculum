@@ -306,8 +306,6 @@ const generalEducationCourses: Record<string, GeneralCourse> = {
   "01418104": {
     code: "01418104", name: "รู้ทันไอที", credits: 2, faculty: "คณะวิทยาศาสตร์", category: "general", subcategory: "language"
   },
-  // ... (previous courses remain the same)
-
   // วิชาสารสนเทศ/คอมพิวเตอร์ (ต่อ)
   "01418106": { code: "01418106", name: "ทักษะเทคโนโลยีดิจิทัล", credits: 3, faculty: "คณะวิทยาศาสตร์", category: "general", subcategory: "language" },
   "01999023": { code: "01999023", name: "ทักษะความเข้าใจและใช้เทคโนโลยีดิจิทัล", credits: 2, faculty: "วิทยาลัยบูรณาการศาสตร์", category: "general", subcategory: "language" },
@@ -352,6 +350,7 @@ const generalEducationCourses: Record<string, GeneralCourse> = {
   "02999037": { code: "02999037", name: "ศิลปะแห่งสุนทรียศาสตร์เพื่อความสุข", credits: 3, faculty: "โครงการบูรณาการวิทยาเขตกำแพงแสน", category: "general", subcategory: "aesthetics" },
   "03600012": { code: "03600012", name: "เทคโนโลยีสีเขียว", credits: 3, faculty: "คณะวิศวกรรมศาสตร์ศรีราชา", category: "general", subcategory: "aesthetics" },
   "03654111": { code: "03654111", name: "สุนทรียศาสตร์ทางการกีฬา", credits: 3, faculty: "คณะวิทยาศาสตร์ศรีราชา", category: "general", subcategory: "aesthetics" }
+
 };
 
 
@@ -456,7 +455,12 @@ const AutoAddCourseInput: React.FC<AutoAddCourseInputProps> = ({ onAdd }) => {
     const course = generalEducationCourses[courseCode];
 
     if (!course) {
-      alert(`ไม่พบรายวิชารหัส ${courseCode} ในฐานข้อมูล`);
+      notifications.show({
+        title: 'ไม่พบรายวิชา',
+        message: `ไม่พบรายวิชารหัส ${courseCode} ในฐานข้อมูล`,
+        color: 'red',
+        icon: <IconAlertTriangle size={24} />,
+      });
       return;
     }
 
@@ -557,7 +561,12 @@ const CourseCurriculumSystem = () => {
     );
 
     if (dependentCourses.length > 0) {
-      alert(`ไม่สามารถลบวิชานี้ได้ เนื่องจากเป็นวิชาบังคับก่อนของ: ${dependentCourses.map(c => c.code).join(', ')}`);
+      notifications.show({
+        title: 'ไม่สามารถลบรายวิชาได้',
+        message: `ไม่สามารถลบรายวิชา ${code} เนื่องจากเป็นวิชาบังคับก่อนของรายวิชาอื่น`,
+        color: 'red',
+        icon: <IconAlertTriangle size={24} />,
+      });
       return;
     }
 
@@ -574,7 +583,12 @@ const CourseCurriculumSystem = () => {
 
   const addCourse = (course: Course) => {
     if (course.prereq && course.prereq !== '-' && !checkPrerequisites(course.code)) {
-      alert(`ไม่สามารถเพิ่มวิชานี้ได้ เนื่องจากยังไม่ได้ลงวิชาบังคับก่อน: ${course.prereq}`);
+      notifications.show({
+        title: 'ไม่สามารถเพิ่มรายวิชาได้',
+        message: `ไม่สามารถเพิ่มรายวิชา ${course.code} เนื่องจากยังไม่ได้ลงวิชาบังคับก่อน: ${course.prereq}`,
+        color: 'red',
+        icon: <IconAlertTriangle size={24} />,
+      });
       return;
     }
     const updatedCourses = [...selectedCourses, course];
