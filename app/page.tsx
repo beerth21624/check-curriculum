@@ -128,6 +128,17 @@ const CourseCurriculumSystem = () => {
     category: '',
   });
 
+  //console hello dev
+  console.log('\n%c╔════════════════════════════════════╗', 'color: #00ff00; font-weight: bold');
+  console.log('%c║                                    ║', 'color: #00ff00; font-weight: bold');
+  console.log('%c║             Hello Dev!             ║', 'color: #00ff00; font-weight: bold');
+  console.log('%c║                                    ║', 'color: #00ff00; font-weight: bold');
+  console.log('%c╚════════════════════════════════════╝\n', 'color: #00ff00; font-weight: bold');
+
+  console.log('\n%c ⭐ คุณมี Message ยังไม่ได้อ่านจาก Beer Do-san! ⭐ ', 'background: #222; color: #bada55; font-size: 18px; padding: 5px;');
+
+  console.log('\n%c=== ไม่ได้ต่อ API แบร่ๆ ===', 'font-weight: bold; font-size: 16px; background: linear-gradient(to right, #ff0000, #00ff00); -webkit-background-clip: text; color: transparent;');
+
   // Load courses from localStorage on initial render
   useEffect(() => {
     const savedCourses = localStorage.getItem('selectedCourses');
