@@ -1339,13 +1339,13 @@ const CourseCurriculumSystem = () => {
             by
           </Text>
           <Anchor
-            href="https://github.com/beerdosan"
+            href="https://github.com/beerth21624"
             target="_blank"
             c="blue"
             fw={500}
             style={{ textDecoration: 'none' }}
           >
-            Beerdosan
+            Beer Do-san
           </Anchor>
           <Anchor
             href="https://github.com/beerth21624"
