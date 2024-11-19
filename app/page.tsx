@@ -354,7 +354,7 @@ const generalEducationCourses: Record<string, GeneralCourse> = {
 };
 
 
-// AddCourseModal Component
+
 interface AddCourseModalProps {
   opened: boolean;
   onClose: () => void;
@@ -379,10 +379,9 @@ const AddCourseModal: React.FC<AddCourseModalProps> = ({
     subcategory: initialSubcategory,
   });
 
-  const handleSubmit = () => {
-    if (newCourse.code && newCourse.name && newCourse.credits) {
-      onAdd({ ...newCourse, id: newCourse.code });
-      onClose();
+  // Reset form when modal is opened
+  useEffect(() => {
+    if (opened) {
       setNewCourse({
         id: '',
         code: '',
@@ -392,6 +391,26 @@ const AddCourseModal: React.FC<AddCourseModalProps> = ({
         subcategory: initialSubcategory,
       });
     }
+  }, [opened, initialCategory, initialSubcategory]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!newCourse.code || !newCourse.name || !newCourse.credits) {
+      return;
+    }
+
+    // Create the course object with ID
+    const courseToAdd: Course = {
+      ...newCourse,
+      id: newCourse.code, // Set ID equal to course code
+    };
+
+    // Call onAdd with the new course
+    onAdd(courseToAdd);
+
+    // Close modal
+    onClose();
   };
 
   return (
@@ -401,45 +420,48 @@ const AddCourseModal: React.FC<AddCourseModalProps> = ({
       title="เพิ่มรายวิชา"
       size="lg"
     >
-      <Stack>
-        <TextInput
-          label="รหัสวิชา"
-          placeholder="01418111"
-          value={newCourse.code}
-          onChange={(e) => setNewCourse({ ...newCourse, code: e.target.value })}
-          required
-        />
-        <TextInput
-          label="ชื่อวิชา"
-          placeholder="Introduction to Computer Science"
-          value={newCourse.name}
-          onChange={(e) => setNewCourse({ ...newCourse, name: e.target.value })}
-          required
-        />
-        <TextInput
-          label="หน่วยกิต"
-          type="number"
-          placeholder="3"
-          value={newCourse.credits.toString()}
-          onChange={(e) => setNewCourse({ ...newCourse, credits: parseInt(e.target.value) || 0 })}
-          required
-        />
-        <TextInput
-          label="วิชาบังคับก่อน"
-          placeholder="-"
-          value={newCourse.prereq || '-'}
-          onChange={(e) => setNewCourse({ ...newCourse, prereq: e.target.value })}
-        />
-        <Button
-          onClick={handleSubmit}
-          disabled={!newCourse.code || !newCourse.name || !newCourse.credits}
-        >
-          เพิ่มรายวิชา
-        </Button>
-      </Stack>
+      <form onSubmit={handleSubmit}>
+        <Stack>
+          <TextInput
+            label="รหัสวิชา"
+            placeholder="01418111"
+            value={newCourse.code}
+            onChange={(e) => setNewCourse({ ...newCourse, code: e.target.value })}
+            required
+          />
+          <TextInput
+            label="ชื่อวิชา"
+            placeholder="Introduction to Computer Science"
+            value={newCourse.name}
+            onChange={(e) => setNewCourse({ ...newCourse, name: e.target.value })}
+            required
+          />
+          <TextInput
+            label="หน่วยกิต"
+            type="number"
+            placeholder="3"
+            value={newCourse.credits || ''}
+            onChange={(e) => setNewCourse({ ...newCourse, credits: parseInt(e.target.value) || 0 })}
+            required
+          />
+          <TextInput
+            label="วิชาบังคับก่อน"
+            placeholder="-"
+            value={newCourse.prereq || '-'}
+            onChange={(e) => setNewCourse({ ...newCourse, prereq: e.target.value })}
+          />
+          <Button
+            type="submit"
+            disabled={!newCourse.code || !newCourse.name || !newCourse.credits}
+          >
+            เพิ่มรายวิชา
+          </Button>
+        </Stack>
+      </form>
     </Modal>
   );
 };
+
 // Auto-add Course Input Component
 interface AutoAddCourseInputProps {
   onAdd: (course: Course) => void;
@@ -679,30 +701,6 @@ const CourseCurriculumSystem = () => {
   };
 
 
-  // Auto-add function
-  const autoAddCourse = (courseCode: string) => {
-    const course = generalEducationCourses[courseCode];
-
-    if (!course) {
-      return {
-        success: false,
-        message: `ไม่พบรายวิชารหัส ${courseCode} ในฐานข้อมูล`
-      };
-    }
-
-    return {
-      success: true,
-      course: {
-        id: course.code,
-        code: course.code,
-        name: course.name,
-        credits: course.credits,
-        category: course.category,
-        subcategory: course.subcategory,
-        prereq: '-'
-      }
-    };
-  };
 
   const handleAutoAdd = (course: Course) => {
     addCourse(course);
