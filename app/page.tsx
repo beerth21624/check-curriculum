@@ -47,6 +47,7 @@ import {
 } from '@tabler/icons-react';
 import { Table } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
+import ConfirmationModal from '@/components/ConfirmationModal';
 
 // Types
 interface Course {
@@ -70,13 +71,6 @@ interface CurriculumStructure {
       };
     };
   };
-}
-
-interface ConfirmationModalProps {
-  course: GeneralCourse | null;
-  opened: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
 }
 
 
@@ -447,82 +441,6 @@ const AddCourseModal: React.FC<AddCourseModalProps> = ({
     </Modal>
   );
 };
-
-const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
-  course,
-  opened,
-  onClose,
-  onConfirm,
-}) => {
-  if (!course) return null;
-
-  const subcategoryNames: Record<string, string> = {
-    wellness: "กลุ่มสาระอยู่ดีมีสุข",
-    entrepreneurship: "กลุ่มสาระศาสตร์แห่งผู้ประกอบการ",
-    language: "กลุ่มสาระภาษากับการสื่อสาร",
-    citizenship: "กลุ่มสาระพลเมืองไทยและพลเมืองโลก",
-    aesthetics: "กลุ่มสาระสุนทรียศาสตร์",
-    extra: "เลือกเรียนรายวิชาใน 5 กลุ่มสาระ"
-  };
-
-  return (
-    <Modal
-      opened={opened}
-      onClose={onClose}
-      title="ยืนยันการเพิ่มรายวิชา"
-      size="lg"
-    >
-      <Stack gap="md">
-        <Alert
-          icon={<IconAlertCircle size={16} />}
-          title="ตรวจสอบข้อมูลรายวิชา"
-          color="blue"
-        >
-          กรุณาตรวจสอบข้อมูลรายวิชาให้ถูกต้องก่อนยืนยันการเพิ่มรายวิชา
-        </Alert>
-
-        <Paper withBorder p="md" radius="md">
-          <Stack gap="xs">
-            <Group justify='space-between'>
-              <Text fw={500} size="lg">{course.name}</Text>
-              <Badge size="lg" radius="md">
-                {course.code}
-              </Badge>
-            </Group>
-
-            <Divider />
-
-            <Group justify='space-between'>
-              <Text c="dimmed">หน่วยกิต</Text>
-              <Badge variant="dot" size="lg">
-                {course.credits} หน่วยกิต
-              </Badge>
-            </Group>
-
-            <Group justify='space-between'>
-              <Text c="dimmed">หมวดหมู่</Text>
-              <Text fw={500}>{subcategoryNames[course.subcategory]}</Text>
-            </Group>
-
-            <Group justify='space-between'>
-              <Text c="dimmed">สังกัด</Text>
-              <Text>{course.faculty}</Text>
-            </Group>
-          </Stack>
-        </Paper>
-
-        <Group justify="flex-end" mt="md">
-          <Button variant="light" color="gray" onClick={onClose}>
-            ยกเลิก
-          </Button>
-          <Button onClick={onConfirm}>
-            ยืนยันการเพิ่มรายวิชา
-          </Button>
-        </Group>
-      </Stack>
-    </Modal>
-  );
-};
 // Auto-add Course Input Component
 interface AutoAddCourseInputProps {
   onAdd: (course: Course) => void;
@@ -546,15 +464,15 @@ const AutoAddCourseInput: React.FC<AutoAddCourseInputProps> = ({ onAdd }) => {
     setConfirmModalOpen(true);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = (category: string, subcategory: string) => {
     if (selectedCourse) {
       const newCourse: Course = {
         id: selectedCourse.code,
         code: selectedCourse.code,
         name: selectedCourse.name,
         credits: selectedCourse.credits,
-        category: selectedCourse.category,
-        subcategory: selectedCourse.subcategory,
+        category: category as 'general' | 'specialized' | 'freeElective',
+        subcategory: subcategory || undefined,
         prereq: '-'
       };
       onAdd(newCourse);
